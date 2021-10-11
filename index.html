@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>XYZ Tiles</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+  <style>
+    body {
+      padding:0px; margin:0px;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+<script>
+  const maxZoom = 23
+
+  const params = (new URL(document.location)).searchParams
+  const url = params.get('url')
+  const bounds = params.get('bounds')
+
+  console.log(url, bounds)
+
+  const map = L.map('map', {
+    maxZoom
+  })
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxNativeZoom: 18,
+    maxZoom
+  }).addTo(map)
+
+  if (url) {
+    L.tileLayer(url, {
+      maxZoom: 20,
+      attribution: 'Allmaps'
+    }).addTo(map)
+  }
+
+  if (bounds) {
+    const coordinates = bounds.split(',')
+      .map((str) => parseFloat(str))
+
+    if (coordinates.length === 4) {
+      map.fitBounds([[coordinates[0], coordinates[1]], [coordinates[2], coordinates[3]]])
+    }
+  }
+</script>
+</body>
+</html>
